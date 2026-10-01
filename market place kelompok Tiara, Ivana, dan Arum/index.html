@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cutie Shop — Aksesoris & Barang Lucu</title>
+<style>
+  *{box-sizing:border-box;}
+  :root{
+    --pink:#ff7fae; --pink-2:#ffb3cd; --pink-soft:#ffeaf2;
+    --lav:#9f86ff; --ink:#2b2431; --muted:#8a8093;
+    --line:#f2e4ee; --white:#fff; --radius:18px;
+    --shadow:0 12px 34px rgba(255,127,174,.20);
+  }
+  html,body{height:100%;}
+  body{
+    margin:0; font-family:'Segoe UI',system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 8% 0%, #ffe9f3 0, transparent 45%),
+      radial-gradient(circle at 92% 8%, #efe7ff 0, transparent 42%),
+      #fffafc;
+    min-height:100vh;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input,select,textarea{font-family:inherit;font-size:14px;}
+
+  /* ============ AUTH ============ */
+  #authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .auth-card{width:100%;max-width:420px;background:var(--white);border-radius:26px;
+    padding:34px 30px 30px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .auth-logo{font-size:44px;text-align:center;line-height:1;}
+  .auth-card h1{text-align:center;font-size:23px;margin:12px 0 4px;}
+  .auth-card p.sub{text-align:center;color:var(--muted);font-size:13px;margin:0 0 22px;}
+  .tabs{display:flex;background:var(--pink-soft);border-radius:14px;padding:5px;margin-bottom:20px;}
+  .tabs button{flex:1;padding:10px;border-radius:10px;background:transparent;
+    font-weight:600;font-size:14px;color:var(--muted);transition:.2s;}
+  .tabs button.active{background:var(--white);color:var(--pink);box-shadow:0 2px 10px rgba(255,127,174,.25);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:6px;color:#5d5266;letter-spacing:.2px;}
+  .field input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);
+    background:#fffdfe;outline:none;transition:.2s;}
+  .field input:focus{border-color:var(--pink-2);box-shadow:0 0 0 4px #ffeaf2;}
+  .btn{width:100%;padding:13px;border-radius:12px;font-weight:700;font-size:14.5px;
+    background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;
+    box-shadow:0 8px 20px rgba(255,127,174,.35);transition:.2s;}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(255,127,174,.42);}
+  .btn.ghost{background:var(--white);color:var(--ink);border:1.5px solid var(--line);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--pink-2);box-shadow:none;}
+  .hint{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;}
+  .hint b{color:var(--pink);}
+  .alert{background:#fff0f4;color:#d63c6d;font-size:12.5px;padding:10px 12px;border-radius:10px;
+    margin-bottom:14px;display:none;border:1px solid #ffd6e3;}
+  .alert.show{display:block;}
+
+  /* ============ APP ============ */
+  #app{display:none;}
+  header{position:sticky;top:0;z-index:60;backdrop-filter:blur(12px);
+    background:rgba(255,250,252,.86);border-bottom:1px solid var(--line);}
+  .nav{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.3px;}
+  .brand span.dot{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:18px;
+    background:linear-gradient(135deg,var(--pink),var(--lav));box-shadow:0 6px 14px rgba(255,127,174,.4);}
+  .nav .spacer{flex:1;}
+  .user-chip{display:flex;align-items:center;gap:9px;background:var(--white);border:1px solid var(--line);
+    padding:7px 12px 7px 7px;border-radius:999px;font-size:13px;font-weight:600;}
+  .avatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;
+    background:linear-gradient(135deg,var(--pink-2),var(--lav));color:#fff;}
+  .icon-btn{position:relative;background:var(--white);border:1px solid var(--line);border-radius:999px;
+    padding:9px 15px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
+  .icon-btn:hover{border-color:var(--pink-2);}
+  .badge{position:absolute;top:-6px;right:-6px;background:var(--pink);color:#fff;font-size:10.5px;font-weight:800;
+    min-width:20px;height:20px;border-radius:999px;display:grid;place-items:center;padding:0 5px;
+    border:2px solid #fffafc;}
+
+  /* ============ HERO ============ */
+  .hero{max-width:1180px;margin:0 auto;padding:26px 20px 6px;}
+  .hero-inner{background:linear-gradient(120deg,#ffe7f1,#f1e8ff);border-radius:24px;padding:28px 30px;
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
+    gap:20px;flex-wrap:wrap;}
+  .hero h2{margin:0 0 6px;font-size:24px;letter-spacing:-.5px;}
+  .hero p{margin:0;color:#6c6277;font-size:13.5px;}
+  .hero .emoji{font-size:52px;}
+
+  /* ============ CATEGORY FILTER ============ */
+  .cat-wrap{max-width:1180px;margin:22px auto 0;padding:0 20px;}
+  .cat-bar{
+    display:flex;gap:9px;overflow-x:auto;padding:4px 2px 10px;
+    scrollbar-width:thin;
+  }
+  .cat-bar::-webkit-scrollbar{height:6px;}
+  .cat-bar::-webkit-scrollbar-thumb{background:var(--pink-2);border-radius:99px;}
+  .cat-btn{
+    flex:0 0 auto;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:700;
+    background:var(--white);border:1.5px solid var(--line);color:#6c6277;
+    display:flex;align-items:center;gap:7px;transition:.18s;white-space:nowrap;
+  }
+  .cat-btn:hover{border-color:var(--pink-2);color:var(--pink);}
+  .cat-btn.active{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;
+    border-color:transparent;box-shadow:0 6px 16px rgba(255,127,174,.35);}
+
+  /* ============ GRID ============ */
+  main{max-width:1180px;margin:0 auto;padding:14px 20px 90px;}
+  .section-title{display:flex;align-items:baseline;gap:10px;margin:8px 0 16px;}
+  .section-title h3{margin:0;font-size:17px;}
+  .section-title small{color:var(--muted);font-size:12.5px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:16px;}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;display:flex;flex-direction:column;transition:.22s;}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#ffd9e7;}
+  .thumb{position:relative;aspect-ratio:1/1;background:linear-gradient(135deg,#ffeef5,#f0eaff);
+    display:grid;place-items:center;overflow:hidden;}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb.no-img::after{content:attr(data-emoji);font-size:54px;}
+  .tag{position:absolute;top:9px;left:9px;background:rgba(255,255,255,.92);color:var(--pink);
+    font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:999px;letter-spacing:.3px;}
+  .card-body{padding:13px 14px 15px;display:flex;flex-direction:column;flex:1;gap:8px;}
+  .p-name{font-size:13.5px;font-weight:700;line-height:1.35;min-height:37px;}
+  .p-price{font-size:15px;font-weight:800;color:var(--pink);margin-top:auto;}
+  .add-btn{width:100%;padding:10px;border-radius:11px;font-weight:700;font-size:12.5px;
+    background:var(--pink-soft);color:#d94d80;transition:.18s;}
+  .add-btn:hover{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;}
+
+  /* ============ CART DRAWER ============ */
+  #overlay{position:fixed;inset:0;background:rgba(43,36,49,.42);backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:.25s;z-index:80;}
+  #overlay.show{opacity:1;pointer-events:auto;}
+  #cartDrawer{position:fixed;top:0;right:0;height:100%;width:100%;max-width:410px;background:#fffafc;
+    z-index:90;transform:translateX(105%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;box-shadow:-14px 0 40px rgba(43,36,49,.16);}
+  #cartDrawer.show{transform:translateX(0);}
+  .drawer-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;
+    gap:10px;background:#fff;}
+  .drawer-head h3{margin:0;font-size:16px;flex:1;}
+  .close-x{background:var(--pink-soft);border-radius:50%;width:32px;height:32px;font-size:15px;
+    color:#d94d80;font-weight:800;}
+  .cart-list{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
+  .cart-item{display:flex;gap:12px;background:#fff;border:1px solid var(--line);
+    border-radius:15px;padding:10px;}
+  .ci-thumb{width:62px;height:62px;border-radius:12px;flex:0 0 62px;overflow:hidden;
+    background:linear-gradient(135deg,#ffeef5,#f0eaff);display:grid;place-items:center;}
+  .ci-thumb img{width:100%;height:100%;object-fit:cover;}
+  .ci-thumb.no-img::after{content:attr(data-emoji);font-size:26px;}
+  .ci-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  .ci-name{font-size:12.5px;font-weight:700;line-height:1.3;}
+  .ci-price{font-size:12.5px;color:var(--pink);font-weight:800;}
+  .qty{display:flex;align-items:center;gap:8px;margin-top:2px;}
+  .qty button{width:24px;height:24px;border-radius:7px;background:var(--pink-soft);color:#d94d80;
+    font-weight:800;font-size:13px;line-height:1;}
+  .qty button:hover{background:var(--pink);color:#fff;}
+  .qty span{font-size:12.5px;font-weight:800;min-width:18px;text-align:center;}
+  .ci-del{background:none;color:#c9bccf;font-size:15px;align-self:flex-start;padding:2px;}
+  .ci-del:hover{color:#e14b6f;}
+  .cart-empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:13.5px;line-height:1.8;}
+  .cart-empty .big{font-size:46px;display:block;margin-bottom:10px;}
+  .drawer-foot{border-top:1px solid var(--line);padding:16px 20px 20px;background:#fff;}
+  .row{display:flex;justify-content:space-between;font-size:13px;color:#6c6277;margin-bottom:7px;}
+  .row.total{font-size:16px;font-weight:800;color:var(--ink);margin:10px 0 14px;
+    padding-top:10px;border-top:1px dashed var(--line);}
+
+  /* ============ MODAL ============ */
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+    padding:18px;background:rgba(43,36,49,.5);backdrop-filter:blur(3px);overflow-y:auto;}
+  .modal.show{display:flex;}
+  .modal-card{background:#fff;border-radius:24px;width:100%;max-width:480px;padding:26px;
+    box-shadow:0 24px 60px rgba(43,36,49,.3);max-height:92vh;overflow-y:auto;}
+  .modal-card h3{margin:0 0 4px;font-size:19px;}
+  .modal-card p.msub{margin:0 0 18px;color:var(--muted);font-size:13px;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .pay-list{display:flex;flex-direction:column;gap:9px;margin-bottom:6px;}
+  .pay{display:flex;align-items:center;gap:11px;border:1.5px solid var(--line);border-radius:13px;
+    padding:11px 13px;cursor:pointer;font-size:13.5px;font-weight:600;transition:.18s;}
+  .pay:hover{border-color:var(--pink-2);}
+  .pay input{accent-color:var(--pink);width:16px;height:16px;}
+  .pay:has(input:checked){border-color:var(--pink);background:var(--pink-soft);}
+  .success{text-align:center;padding:8px 0;}
+  .success .check{width:74px;height:74px;border-radius:50%;margin:0 auto 16px;display:grid;
+    place-items:center;font-size:34px;background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;}
+  .success h3{margin-bottom:8px;}
+  .success .ord{background:var(--pink-soft);border-radius:12px;padding:12px;font-size:13px;
+    margin:14px 0 20px;color:#8a5f76;line-height:1.7;}
+  .success .ord b{color:#d94d80;}
+
+  /* ============ TOAST ============ */
+  #toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,90px);z-index:200;
+    background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-size:13px;font-weight:600;
+    opacity:0;transition:.3s;pointer-events:none;box-shadow:0 12px 30px rgba(43,36,49,.35);}
+  #toast.show{opacity:1;transform:translate(-50%,0);}
+
+  @media(max-width:560px){
+    .nav{padding:12px 14px;gap:9px;}
+    .brand{font-size:15px;}
+    .brand span.dot{width:30px;height:30px;font-size:16px;}
+    .user-chip .u-name{display:none;}
+    .hero-inner{padding:20px;}
+    .hero .emoji{display:none;}
+    main{padding:14px 14px 80px;}
+    .cat-wrap{padding:0 14px;}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+    .two{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= AUTH SCREEN ================= -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">🎀</div>
+    <h1>Cutie Shop</h1>
+    <p class="sub">Aksesoris & barang lucu pilihan ✨</p>
+
+    <div class="tabs">
+      <button id="tabLogin" class="active" onclick="switchTab('login')">Masuk</button>
+      <button id="tabSignup" onclick="switchTab('signup')">Daftar</button>
+    </div>
+
+    <div id="authAlert" class="alert"></div>
+
+    <form id="loginForm" onsubmit="doLogin(event)">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="nama@email.com" required />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••" required />
+      </div>
+      <button class="btn" type="submit">Masuk</button>
+      <p class="hint">Akun demo: <b>demo@cutie.shop</b> / <b>123456</b></p>
+    </form>
+
+    <form id="signupForm" style="display:none" onsubmit="doSignup(event)">
+      <div class="field">
+        <label>Nama Lengkap</label>
+        <input type="text" id="suName" placeholder="Nama kamu" required />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="suEmail" placeholder="nama@email.com" required />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="suPass" placeholder="Minimal 6 karakter" minlength="6" required />
+      </div>
+      <button class="btn" type="submit">Buat Akun</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app">
+  <header>
+    <div class="nav">
+      <div class="brand"><span class="dot">🎀</span> Cutie Shop</div>
+      <div class="spacer"></div>
+      <div class="user-chip">
+        <div class="avatar" id="avatarInitial">U</div>
+        <span class="u-name" id="userName">User</span>
+      </div>
+      <button class="icon-btn" onclick="openCart()">🛒 Keranjang <span class="badge" id="cartBadge">0</span></button>
+      <button class="icon-btn" onclick="doLogout()" title="Keluar">🚪 Keluar</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h2>Halo, <span id="heroName">Sahabat</span> 👋</h2>
+        <p>100 produk lucu dari 10 kategori. Gratis ongkir min. belanja Rp 200.000!</p>
+      </div>
+      <div class="emoji">🧸✨</div>
+    </div>
+  </section>
+
+  <!-- CATEGORY FILTER -->
+  <div class="cat-wrap">
+    <div class="cat-bar" id="catBar"></div>
+  </div>
+
+  <main>
+    <div class="section-title">
+      <h3 id="sectionHeading">Semua Produk</h3>
+      <small id="productCount"></small>
+    </div>
+    <div class="grid" id="productGrid"></div>
+  </main>
+</div>
+
+<!-- ================= CART DRAWER ================= -->
+<div id="overlay" onclick="closeCart()"></div>
+<aside id="cartDrawer">
+  <div class="drawer-head">
+    <h3>🛒 Keranjang Belanja</h3>
+    <button class="close-x" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-list" id="cartList"></div>
+  <div class="drawer-foot" id="cartFoot">
+    <div class="row"><span>Subtotal</span><span id="sumSubtotal">Rp 0</span></div>
+    <div class="row"><span>Ongkos Kirim</span><span id="sumShipping">Rp 0</span></div>
+    <div class="row total"><span>Total</span><span id="sumTotal">Rp 0</span></div>
+    <button class="btn" onclick="openCheckout()">Checkout Sekarang →</button>
+  </div>
+</aside>
+
+<!-- ================= CHECKOUT MODAL ================= -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-card">
+    <h3>📦 Data Pengiriman</h3>
+    <p class="msub">Lengkapi data di bawah untuk menyelesaikan pesanan.</p>
+    <form onsubmit="doCheckout(event)">
+      <div class="field">
+        <label>Nama Penerima</label>
+        <input type="text" id="coName" required />
+      </div>
+      <div class="two">
+        <div class="field">
+          <label>No. Telepon</label>
+          <input type="tel" id="coPhone" placeholder="08xxxxxxxxxx" required />
+        </div>
+        <div class="field">
+          <label>Kota</label>
+          <input type="text" id="coCity" placeholder="Jakarta" required />
+        </div>
+      </div>
+      <div class="field">
+        <label>Alamat Lengkap</label>
+        <textarea id="coAddress" rows="3" required
+          style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fffdfe;outline:none;resize:vertical;"></textarea>
+      </div>
+      <div class="field">
+        <label>Metode Pembayaran</label>
+        <div class="pay-list">
+          <label class="pay"><input type="radio" name="pay" value="Transfer Bank BCA" checked> 🏦 Transfer Bank BCA</label>
+          <label class="pay"><input type="radio" name="pay" value="GoPay"> 💚 GoPay</label>
+          <label class="pay"><input type="radio" name="pay" value="OVO"> 💜 OVO</label>
+          <label class="pay"><input type="radio" name="pay" value="COD"> 🚚 Bayar di Tempat (COD)</label>
+        </div>
+      </div>
+      <div class="row total" style="margin-top:14px;"><span>Total Bayar</span><span id="coTotal">Rp 0</span></div>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="btn ghost" onclick="closeCheckout()">Batal</button>
+        <button type="submit" class="btn">Bayar Sekarang</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= SUCCESS MODAL ================= -->
+<div class="modal" id="successModal">
+  <div class="modal-card">
+    <div class="success">
+      <div class="check">✓</div>
+      <h3>Pesanan Berhasil!</h3>
+      <p class="msub">Terima kasih sudah belanja di Cutie Shop 🎀</p>
+      <div class="ord" id="orderDetail"></div>
+      <button class="btn" onclick="closeSuccess()">Lanjut Belanja</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* =========================================================
+   KATEGORI + PRODUK  (10 kategori × 10 produk = 100)
+   Gambar: taruh file di folder img/ dengan nama sesuai properti img.
+   Jika gambar tidak ada, otomatis fallback ke emoji.
+   ========================================================= */
+
+const CATEGORIES = [
+  { id:"all",        name:"Semua",              emoji:"🛍️" },
+  { id:"Keychain",   name:"Gantungan Kunci",    emoji:"🔑" },
+  { id:"Blind Box",  name:"Blind Box",          emoji:"📦" },
+  { id:"Plush",      name:"Boneka Plush",       emoji:"🧸" },
+  { id:"Hair Clip",  name:"Aksesoris Rambut",   emoji:"🎀" },
+  { id:"Bag Charm",  name:"Bag Charm",          emoji:"👝" },
+  { id:"Stationery", name:"Alat Tulis",         emoji:"✏️" },
+  { id:"Phone",      name:"Aksesoris HP",       emoji:"📱" },
+  { id:"Jewelry",    name:"Perhiasan",          emoji:"💎" },
+  { id:"Decor",      name:"Dekorasi Kamar",     emoji:"🕯️" },
+  { id:"Squishy",    name:"Squishy",            emoji:"🫧" }
+];
+
+const PRODUCTS = [
+  /* ============ 1. KEYCHAIN ============ */
+  { id:1,  name:"Hello Kitty Plush Keychain",        price:45000,  cat:"Keychain", emoji:"🎀", img:"img/keychain-01.jpg" },
+  { id:2,  name:"Miffy Nijntje Keychain",            price:38000,  cat:"Keychain", emoji:"🐰", img:"img/keychain-02.jpg" },
+  { id:3,  name:"Pusheen The Cat Keychain",          price:65000,  cat:"Keychain", emoji:"🐱", img:"img/keychain-03.jpg" },
+  { id:4,  name:"BT21 Tata Keychain Official",       price:89000,  cat:"Keychain", emoji:"💫", img:"img/keychain-04.jpg" },
+  { id:5,  name:"Chiikawa Plush Keychain",           price:120000, cat:"Keychain", emoji:"🐹", img:"img/keychain-05.jpg" },
+  { id:6,  name:"Kuromi Metal Keychain",             price:52000,  cat:"Keychain", emoji:"💜", img:"img/keychain-06.jpg" },
+  { id:7,  name:"My Melody Acrylic Keychain",        price:35000,  cat:"Keychain", emoji:"🌸", img:"img/keychain-07.jpg" },
+  { id:8,  name:"Cinnamoroll Soft Keychain",         price:48000,  cat:"Keychain", emoji:"☁️", img:"img/keychain-08.jpg" },
+  { id:9,  name:"Pompompurin Keychain",              price:42000,  cat:"Keychain", emoji:"🍮", img:"img/keychain-09.jpg" },
+  { id:10, name:"Gudetama Keychain",                 price:39000,  cat:"Keychain", emoji:"🍳", img:"img/keychain-10.jpg" },
+
+  /* ============ 2. BLIND BOX ============ */
+  { id:11, name:"Labubu The Monsters Blind Box",     price:250000, cat:"Blind Box", emoji:"👾", img:"img/labubu.jpg" },
+  { id:12, name:"Sonny Angel Animal Series Ver. 4",  price:180000, cat:"Blind Box", emoji:"👼", img:"img/sonny-angel.jpg" },
+  { id:13, name:"Pop Mart Molly Blind Box",          price:165000, cat:"Blind Box", emoji:"🎨", img:"img/blindbox-03.jpg" },
+  { id:14, name:"Pop Mart Skullpanda Blind Box",     price:220000, cat:"Blind Box", emoji:"💀", img:"img/blindbox-04.jpg" },
+  { id:15, name:"Pop Mart Dimoo Blind Box",          price:195000, cat:"Blind Box", emoji:"🌙", img:"img/blindbox-05.jpg" },
+  { id:16, name:"Pop Mart Hirono Blind Box",         price:210000, cat:"Blind Box", emoji:"🧒", img:"img/blindbox-06.jpg" },
+  { id:17, name:"Smiski Living Series Blind Box",    price:145000, cat:"Blind Box", emoji:"🪄", img:"img/blindbox-07.jpg" },
+  { id:18, name:"Pop Mart Crybaby Blind Box",        price:230000, cat:"Blind Box", emoji:"😢", img:"img/blindbox-08.jpg" },
+  { id:19, name:"Sanrio Blind Box Mini Figure",      price:95000,  cat:"Blind Box", emoji:"🎁", img:"img/blindbox-09.jpg" },
+  { id:20, name:"Kuji Ichiban Sanrio Blind Box",     price:175000, cat:"Blind Box", emoji:"🎯", img:"img/blindbox-10.jpg" },
+
+  /* ============ 3. PLUSH ============ */
+  { id:21, name:"Jellycat Bashful Bunny Medium",     price:450000, cat:"Plush", emoji:"🐇", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcOlh4l0shWEHcvMrD9b9KKnAZJ2G3tHun8vvcjikLWg&s=10" },
+  { id:22, name:"Jellycat Cloud Plush",              price:380000, cat:"Plush", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnln077wkzruFnsh7b7W97X-Jgjlo7Jet9E-2taL7mDA&s" },
+  { id:23, name:"Sanrio Hello Kitty Plush 30cm",     price:180000, cat:"Plush", emoji:"🎀", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYGNyV0GuTmCVv8M5jKJdu5SqeGXjmdomtlCf3irttFg&s"
+ },
+  { id:24, name:"Squishmallow 8\" Assorted",         price:220000, cat:"Plush", emoji:"🦄", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShrKvS0e2LWF3jTuv5olF88T42kambF_C9ZrqZNedgdQ&s=10" },
+  { id:25, name:"Miffy Sitting Plush 25cm",          price:165000, cat:"Plush", emoji:"🐰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkQ6R94tcZt9PEp6FLZT8xXr_jLH1OKD51M9Kqh7Otdw&s=10" },
+  { id:26, name:"Disney Stitch Plush 30cm",          price:195000, cat:"Plush", emoji:"👽", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr-TGc2LCQxewl78sDXzwS3sZCP3oS9W4kFISvQRbIeQ&s=10" },
+  { id:27, name:"Pokemon Pikachu Plush 20cm",        price:175000, cat:"Plush", emoji:"⚡", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH8wIncYCpH-RYMsBj3Daoi1Ji6a4n6lBjpAr2UfWfnQ&s=10" },
+  { id:28, name:"Sanrio Cinnamoroll Plush",          price:185000, cat:"Plush", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRolSRnXihe7e5_TpFwlZj8lz4m-kTDgxU30SGb9d9e1Q&s=10" },
+  { id:29, name:"Labubu Plush Doll 17cm",            price:350000, cat:"Plush", emoji:"👾", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqT2kLxtwoD43Wo7_SYgss-StxBvUOG54wi2ROpKWVyQ&s=10" },
+  { id:30, name:"Tonari no Totoro Plush",            price:210000, cat:"Plush", emoji:"🌳", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0mUFqSWkCFMztPWxnOvZZFrxrlRA_NtT8VqvMxd0pXw&s=10" },
+
+  /* ============ 4. HAIR CLIP ============ */
+  { id:31, name:"Sanrio Hair Clip Set 6pcs",         price:25000,  cat:"Hair Clip", emoji:"🎀", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKwYiooAqBWOzouPG2klOi32Cu-X3NOD4JqDzW2iKBjA&s" },
+  { id:32, name:"Miffy Hair Tie Set",                price:22000,  cat:"Hair Clip", emoji:"🐰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFkFkYgIHVQAHkmBMT2zy_UqZ4VzWY4trjd-8OiA-JwQ&s=10" },
+  { id:33, name:"Pearl Hair Clip Korean Style",      price:35000,  cat:"Hair Clip", emoji:"🦪", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwbV5Y5BC_56Ijj-JHxK0osGsZPfBvsobDuNPzmhNLFA&s=10" },
+  { id:34, name:"Ribbon Satin Hair Clip",            price:28000,  cat:"Hair Clip", emoji:"🎀", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8TyOPuzr6eYSgv3ab_By26rhusDd9NScLWcxAQ3owXA&s=10" },
+  { id:35, name:"Butterfly Hair Claw Clip",          price:32000,  cat:"Hair Clip", emoji:"🦋", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkIFrRz7E0XmnNemWkJCCTxDt34mjZ9txvKf2ltDYvuA&s=10" },
+  { id:36, name:"Kuromi Hair Band",                  price:45000,  cat:"Hair Clip", emoji:"💜", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuaUnVcUMoenhXBxJngB1FXuBcinygQ5FJxOM8H_6zuw&s" },
+  { id:37, name:"Cinnamoroll Hair Scrunchie",        price:18000,  cat:"Hair Clip", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjze3Ux1wgL14on2y1HBAT5_OfuDrJPs5HhFtDQlqjVg&s=10" },
+  { id:38, name:"Kawaii Bear Hair Clip",             price:24000,  cat:"Hair Clip", emoji:"🐻", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRggZ62X4s2YPS4kJikyTHVXG2aqu8nJUnDC8g1FU--IQ&s=10" },
+  { id:39, name:"Cartoon Fruit Hair Clip Set",       price:20000,  cat:"Hair Clip", emoji:"🍓", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHratV6xh3FvVZsA4NDoiGytJ8e42M01mVk99MVPLuFQ&s=10" },
+  { id:40, name:"My Melody Hair Pin Set",            price:30000,  cat:"Hair Clip", emoji:"🌸", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjKO6KRp7hfaqjrWk1zBNvw2g-0nM7Pjf0qAQpHBqFKQ&s=10" },
+
+  /* ============ 5. BAG CHARM ============ */
+  { id:41, name:"Kuromi Plush Bag Charm",            price:55000,  cat:"Bag Charm", emoji:"💜", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM7jXwxx1lbaBzgo-YCHQKBG0g59N3oWDq56b1SPIIKw&s=10" },
+  { id:42, name:"Hello Kitty Bag Charm",             price:58000,  cat:"Bag Charm", emoji:"🎀", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3lnf-QyxxjEm4b5JhXNBUXhEX-YbIM3s1fcdIWMm_hA&s=10" },
+  { id:43, name:"Cinnamoroll Bag Charm",             price:62000,  cat:"Bag Charm", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJz_IEdSXeDcuGGQeLzSZGkTorg20tvyzN1710G0swCA&s=10" },
+  { id:44, name:"Miffy Bag Charm Soft",              price:48000,  cat:"Bag Charm", emoji:"🐰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8fORwdhjMCbq-tRTYp1KyEKox92OBcpRJpdwQdQNOFQ&s=10" },
+  { id:45, name:"Sanrio Characters Bag Charm",       price:65000,  cat:"Bag Charm", emoji:"🌈", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHu3jl8tlBskc6peBsVerkE1tekHUTx0bxFLl8AAm_vw&s=10" },
+  { id:46, name:"Labubu Bag Charm Vinyl",            price:185000, cat:"Bag Charm", emoji:"👾", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyFmp9b8AdgbFOJmD5jvGI9M4l39tmMuYeJ0hiZ6CXRw&s=10" },
+  { id:47, name:"Pompompurin Bag Charm",             price:52000,  cat:"Bag Charm", emoji:"🍮", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsWFCP4rLax-9gCmKy991hRcMS5rlsFp63668fYmgD4g&s=10" },
+  { id:48, name:"Chiikawa Bag Charm Set",            price:135000, cat:"Bag Charm", emoji:"🐹", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScC3HUt3-OaX1cgjivxJeGEjPH8BTjkO9fyKr4HMYRUg&s=10" },
+  { id:49, name:"Gudetama Bag Charm",                price:49000,  cat:"Bag Charm", emoji:"🍳", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTG0VHcj0xy7cY1DodBSTUWQ-vKjVQaUMOE56VlmV3D9w&s=10" },
+  { id:50, name:"My Melody Bag Charm",               price:53000,  cat:"Bag Charm", emoji:"🌸", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe24tFLmFq_PyTxSnrAvAhrDbVxurzK5akIW5VBBwCog&s=10" },
+
+  /* ============ 6. STATIONERY ============ */
+  { id:51, name:"Sanrio Notebook A5",                price:35000,  cat:"Stationery", emoji:"📓", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRToKXRQahalcRPtGclF1xzk5QJhGZpcLODG4LJW4BpbQ&s=10" },
+  { id:52, name:"Miffy Gel Pen Set 5pcs",            price:45000,  cat:"Stationery", emoji:"🖊️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6QqlO8m86gettRHuzVtLy6pP7iEfzubze4jJ2v9gR9A&s" },
+  { id:53, name:"Cinnamoroll Pencil Case",           price:65000,  cat:"Stationery", emoji:"✏️", img:"https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQQ0lNPnZa1KIsSTJSMTsUpQZxAWOJgJRUBZOldWxZKRVmRNa5kM53I7nX3Rjph4km7s0kcNgIjipsIyprJ8sTxM4xEnzIG0TXRJwz5OhCjfSMr-n6AOFCQTUks8lWaWtbjcQUavg&usqp=CAc" },
+  { id:54, name:"Kuromi Sticker Pack",               price:18000,  cat:"Stationery", emoji:"🌟", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDPOvI0bZtPidi-wJJ8ugCrsHqBEoaVREdfdNQobkj4Q&s=10" },
+  { id:55, name:"Kawaii Washi Tape Set",             price:28000,  cat:"Stationery", emoji:"🎨", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyp9TJrYNrfW9Zk7mF3Bin0o2HhfL7As0ydiQ1Jip2dw&s=10" },
+  { id:56, name:"Hello Kitty Mechanical Pencil",     price:32000,  cat:"Stationery", emoji:"✏️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5QZTr4VZQmBBIZr5BnZt0-HwxG92l3G-VIt3hOcVsiw&s=10" },
+  { id:57, name:"Sanrio Mini Notepad",               price:22000,  cat:"Stationery", emoji:"📝", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFy0PJL8MyhtMT4g49w9nbvFmNo3q823LVAEo_0f4IAQ&s=10" },
+  { id:58, name:"Gudetama Eraser Set",               price:25000,  cat:"Stationery", emoji:"🧽", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5Agv0BW4Y7v8uZwiSAz1d0ZdIHLeRNXOkdQBZufn1Zg&s=10" },
+  { id:59, name:"My Melody Marker Set",              price:55000,  cat:"Stationery", emoji:"🖍️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBGCJfC0KEGfpRKfVFjMqyn_8skFECd44LcmxDkYSXmQ&s=10" },
+  { id:60, name:"Pompompurin Sticky Notes",          price:20000,  cat:"Stationery", emoji:"📌", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhNdLO59bUwQqnYUz3HVLYPKmUF9QzKElt71LF0Bk-AQ&s=10" },
+
+  /* ============ 7. PHONE ACCESSORIES ============ */
+  { id:61, name:"Sanrio Phone Case iPhone",          price:75000,  cat:"Phone", emoji:"📱", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTowm3Z9MlS13n-Q_-aB4RVJfOmNTG7NZVq-myytfrSIw&s=10" },
+  { id:62, name:"Miffy AirPods Case",                price:65000,  cat:"Phone", emoji:"🎧", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzMBOMZUoOvXu6S-3uGIue-tCU3KJfbqXXl8iWCcZ9WA&s=10" },
+  { id:63, name:"Kuromi Phone Grip",                 price:35000,  cat:"Phone", emoji:"💜", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxQkjKnxJHalsVBw4EO5w1Gi8-z9VvyzWrY9j42eUFIA&s=10" },
+  { id:64, name:"Cinnamoroll Phone Strap",           price:45000,  cat:"Phone", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyWx8kbhrmd_NGFYw635LE5uCmIHw1WVN-soISD2YaDw&s=10" },
+  { id:65, name:"Hello Kitty Charging Cable",        price:55000,  cat:"Phone", emoji:"🔌", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtTBXtM938OZPaQDV0HvrsUj4epK3VNJHU3DIPjZMs9w&s" },
+  { id:66, name:"Kawaii Popsocket Set",              price:40000,  cat:"Phone", emoji:"🌸", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58jb_f-uMB91-NE8K4O71vjpYr5TIVfAX30PzbzP41Q&s" },
+  { id:67, name:"Sanrio Phone Ring Holder",          price:38000,  cat:"Phone", emoji:"💍", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwsKwBKhY-fK-5NnA2dvMufZ3Q2VRnug3ZTtatDs59gg&s=10" },
+  { id:68, name:"My Melody AirPods Pro Case",        price:72000,  cat:"Phone", emoji:"🎧", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqryr_rrn7MiRKv4iBSSVxFOUBrEyArc4ofeDhVso8gQ&s=10" },
+  { id:69, name:"Pompompurin Phone Lanyard",         price:52000,  cat:"Phone", emoji:"🍮", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMHR3Owdw-jtXWxCRQONjhOGhTE_A_T6QikAfiRFIbEA&s=10" },
+  { id:70, name:"Gudetama Phone Stand",              price:42000,  cat:"Phone", emoji:"🍳", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_PJFfoFySWFQLJiJ2JEwELXBw8U8VVmurVYKnGx-lSA&s" },
+
+  /* ============ 8. JEWELRY ============ */
+  { id:71, name:"Hello Kitty Silver Necklace",       price:125000, cat:"Jewelry", emoji:"📿", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy61bJefIKdz0G5sW2ZvHoCll1pTv7obh8-4Ng3owxKg&s=10" },
+  { id:72, name:"Sanrio Character Bracelet",         price:85000,  cat:"Jewelry", emoji:"💫", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2RTZrFBw7EUmWE-CgMI6Bzp4jqBmf8CZdeYSYyQTdlQ&s=10" },
+  { id:73, name:"Kuromi Earring Set",                price:65000,  cat:"Jewelry", emoji:"💜", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQx5cFGJu1mouMW5qjiYRL-LotKb_mlHJQg3cy9hQkthA&s=10" },
+  { id:74, name:"Cinnamoroll Pearl Ring",            price:78000,  cat:"Jewelry", emoji:"💍", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMxhlLVW6ojuX7j_IRjRRlm8P3SdHIpd2P2k76fTBI1Q&s=10" },
+  { id:75, name:"Miffy Gold Plated Necklace",        price:145000, cat:"Jewelry", emoji:"🐰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF5QjVbvgOd-SMC_eHkHI0R6ZOaKfyjWV4YqEnsgzFkA&s=10" },
+  { id:76, name:"Kawaii Star Anklet",                price:55000,  cat:"Jewelry", emoji:"⭐", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4zi5WdGyOAktl-JJmTSOWYAEtlUVToNSsU48wFurLAQ&s" },
+  { id:77, name:"My Melody Charm Bracelet",          price:92000,  cat:"Jewelry", emoji:"🌸", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX_UsOMnf5YKLOMNcqwFvyk5DapihTjJ6EXnNAj85J4Q&s=10" },
+  { id:78, name:"Sanrio Heart Pendant",              price:105000, cat:"Jewelry", emoji:"💗", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOMmcGhz_WBoYuSLMx-jXo5mXan-atLttXOlHEnzR4Rw&s=10" },
+  { id:79, name:"Pompompurin Stud Earrings",         price:58000,  cat:"Jewelry", emoji:"🍮", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9x5D4fgQTnM64HL_-pd5mMP-kd15z3SV-RfiDI8SNw&s" },
+  { id:80, name:"Gudetama Ring Set",                 price:62000,  cat:"Jewelry", emoji:"🍳", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz3or22sNAj-aiXszipYMJk0t9YqVmxw-3yBa2sDOhdw&s=10" },
+
+  /* ============ 9. DECOR ============ */
+  { id:81, name:"Sanrio LED Night Light",            price:125000, cat:"Decor", emoji:"💡", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4Hzc0K5Bm8jewiUaNNxLyHjHGcJM8cZF8JIjSWIsprw&s=10" },
+  { id:82, name:"Miffy Wall Sticker Set",            price:45000,  cat:"Decor", emoji:"🐰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtWRWdOOHQNboT9gV8aq3BxnP9jCAZ_HMBcTQw9gIWCA&s=10" },
+  { id:83, name:"Kawaii Cloud Lamp",                 price:155000, cat:"Decor", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS34wpaYIwh408utlS_Z5iZX_iieJNfqiZoO_8pd0sxTQ&s=10" },
+  { id:84, name:"Hello Kitty Alarm Clock",           price:135000, cat:"Decor", emoji:"⏰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT51ZLnSakYQ4nqeTiHTdH5mSbrXraPEMrgILgzpDzvqA&s=10" },
+  { id:85, name:"Cinnamoroll Bedside Lamp",          price:165000, cat:"Decor", emoji:"🌙", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0ecU5cBolM8vJJI1NmA71mM0Ak8nCfrglGrsCrWJ4mw&s=10" },
+  { id:86, name:"Kuromi Poster A3",                  price:35000,  cat:"Decor", emoji:"🖼️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw8a74cuJl-dDJ5IHKR8rU0Z9wnYQvk-q0zYSurH_-1Q&s=10" },
+  { id:87, name:"Sanrio Ceramic Mug",                price:65000,  cat:"Decor", emoji:"☕", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfX2T6Y_r3szUm0R0PkBWio02rD8pv-taOP78QmkgBDg&s=10" },
+  { id:88, name:"Pompompurin Plush Cushion",         price:95000,  cat:"Decor", emoji:"🍮", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwcSdZQrr53EHtBXi2PqP4U-sBGiwvWwpLUzlN2Zr30g&s=10" },
+  { id:89, name:"My Melody Photo Frame",             price:55000,  cat:"Decor", emoji:"🌸", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVzL6nC2u7Qzqkk3jPdoTevJYkZeUpxVjLtKCgAJl9hA&s=10" },
+  { id:90, name:"Gudetama Coaster Set",              price:42000,  cat:"Decor", emoji:"🥤", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNL6YcYXKrVC58j7Ta2BUcRRT0klRgnT-TFR40J5DJfg&s=10" },
+
+  /* ============ 10. SQUISHY ============ */
+  { id:91,  name:"Gudetama Squishy Stress Ball",     price:42000,  cat:"Squishy", emoji:"🍳", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAnrDQttzqC7FuZkSOXIgX4FVjeqJw2ZTNey2Qvlfb1w&s=10" },
+  { id:92,  name:"Sanrio Characters Squishy Set",    price:55000,  cat:"Squishy", emoji:"🌈", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4RPpDpNVyeXa5q2pZwPgKc-XuuODR2-g-SkoXEIWWag&s=10" },
+  { id:93,  name:"Puni Maru Mochi Squishy",          price:38000,  cat:"Squishy", emoji:"🍡", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbDMFe0iaOZ18GPGpwdrjbR6GzPLndPjQnOB8hei1H9A&s=10" },
+  { id:94,  name:"Kawaii Animal Squishy 6pcs",       price:48000,  cat:"Squishy", emoji:"🐾", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYusPri0TBgdCAw-BLRalYN0qCWKTggODHfiysfRMsrQ&s=10" },
+  { id:95,  name:"Hello Kitty Jumbo Squishy",        price:85000,  cat:"Squishy", emoji:"🎀", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8RrAMtAgWA0QB0JEL0YPoB2lbyNWyIrjirqM3n8e0JA&s=10" },
+  { id:96,  name:"Miffy Squishy Stress Toy",         price:45000,  cat:"Squishy", emoji:"🐰", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbCHE8tepd5IpmQJv-aJVxbuzQ15H5grQrKkoKK3qcCA&s=10" },
+  { id:97,  name:"Kuromi Squishy Keychain",          price:35000,  cat:"Squishy", emoji:"💜", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIfBVvg_6Ul374qNlQJheJZ_VkYktCCESMiJHFVjR6Ow&s=10" },
+  { id:98,  name:"Cinnamoroll Squishy Bun",          price:52000,  cat:"Squishy", emoji:"☁️", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLQDfZs1mPY5x95lNPJ5YHBT65vOVFjgHtPRa3RRo7TA&s=10" },
+  { id:99,  name:"My Melody Squishy Set",            price:58000,  cat:"Squishy", emoji:"🌸", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlXgKANxx4jfq9BG5Cag8SG_LXm-9gMmZL6SgVJHCQUA&s=10" },
+  { id:100, name:"Pompompurin Squishy Pudding",      price:62000,  cat:"Squishy", emoji:"🍮", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRun1Myop3UQ3pOCWgKMyvXnfzsCqr6BUrMxLeDoZutrw&s=10" }
+];
+
+const SHIPPING = 15000;
+const FREE_SHIPPING_MIN = 200000;
+
+/* ================= STATE ================= */
+let currentUser = null;
+let cart = [];
+let activeCategory = "all";
+
+/* ================= HELPERS ================= */
+const rupiah = n => "Rp " + n.toLocaleString("id-ID");
+const $ = id => document.getElementById(id);
+
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ================= LOCAL STORAGE ================= */
+const LS_USERS   = "cutie_users";
+const LS_SESSION = "cutie_session";
+const cartKey    = email => "cutie_cart_" + email;
+
+function getUsers(){ return JSON.parse(localStorage.getItem(LS_USERS) || "[]"); }
+function saveUsers(u){ localStorage.setItem(LS_USERS, JSON.stringify(u)); }
+
+(function seed(){
+  const users = getUsers();
+  if(!users.find(u => u.email === "demo@cutie.shop")){
+    users.push({ name:"Demo User", email:"demo@cutie.shop", pass:"123456" });
+    saveUsers(users);
+  }
+})();
+
+function saveCart(){
+  if(currentUser) localStorage.setItem(cartKey(currentUser.email), JSON.stringify(cart));
+}
+
+/* ================= AUTH ================= */
+function switchTab(mode){
+  const isLogin = mode === "login";
+  $("tabLogin").classList.toggle("active", isLogin);
+  $("tabSignup").classList.toggle("active", !isLogin);
+  $("loginForm").style.display  = isLogin ? "block" : "none";
+  $("signupForm").style.display = isLogin ? "none"  : "block";
+  hideAlert();
+}
+function showAlert(msg){ const a=$("authAlert"); a.textContent=msg; a.classList.add("show"); }
+function hideAlert(){ $("authAlert").classList.remove("show"); }
+
+function doLogin(e){
+  e.preventDefault();
+  const email = $("loginEmail").value.trim().toLowerCase();
+  const pass  = $("loginPass").value;
+  const user  = getUsers().find(u => u.email === email && u.pass === pass);
+  if(!user){ showAlert("❌ Email atau password salah. Coba lagi ya!"); return; }
+  localStorage.setItem(LS_SESSION, JSON.stringify({ name:user.name, email:user.email }));
+  hideAlert(); e.target.reset(); startApp();
+}
+
+function doSignup(e){
+  e.preventDefault();
+  const name  = $("suName").value.trim();
+  const email = $("suEmail").value.trim().toLowerCase();
+  const pass  = $("suPass").value;
+  const users = getUsers();
+  if(users.find(u => u.email === email)){ showAlert("❌ Email sudah terdaftar. Silakan masuk."); return; }
+  users.push({ name, email, pass });
+  saveUsers(users);
+  localStorage.setItem(LS_SESSION, JSON.stringify({ name, email }));
+  hideAlert(); e.target.reset();
+  toast("Akun berhasil dibuat! 🎉");
+  startApp();
+}
+
+function doLogout(){
+  if(!confirm("Yakin mau keluar dari akun?")) return;
+  localStorage.removeItem(LS_SESSION);
+  currentUser = null; cart = []; closeCart();
+  $("app").style.display = "none";
+  $("authScreen").style.display = "flex";
+  switchTab("login");
+  toast("Kamu sudah keluar 👋");
+}
+
+/* ================= APP START ================= */
+function startApp(){
+  const sess = localStorage.getItem(LS_SESSION);
+  if(!sess) return;
+  currentUser = JSON.parse(sess);
+
+  $("userName").textContent = currentUser.name.split(" ")[0];
+  $("heroName").textContent = currentUser.name.split(" ")[0];
+  $("avatarInitial").textContent = currentUser.name.charAt(0).toUpperCase();
+  $("coName").value = currentUser.name;
+
+  cart = JSON.parse(localStorage.getItem(cartKey(currentUser.email)) || "[]");
+  activeCategory = "all";
+
+  $("authScreen").style.display = "none";
+  $("app").style.display = "block";
+
+  renderCategories();
+  renderProducts();
+  renderCart();
+}
+
+/* ================= RENDER KATEGORI ================= */
+function renderCategories(){
+  $("catBar").innerHTML = CATEGORIES.map(c => `
+    <button class="cat-btn ${c.id===activeCategory?'active':''}" onclick="selectCategory('${c.id}')">
+      <span>${c.emoji}</span> ${c.name}
+    </button>
+  `).join("");
+}
+
+function selectCategory(id){
+  activeCategory = id;
+  renderCategories();
+  renderProducts();
+  window.scrollTo({ top: 260, behavior: "smooth" });
+}
+
+/* ================= RENDER PRODUK ================= */
+function renderProducts(){
+  const list = activeCategory === "all"
+    ? PRODUCTS
+    : PRODUCTS.filter(p => p.cat === activeCategory);
+
+  const catName = CATEGORIES.find(c => c.id === activeCategory).name;
+  $("sectionHeading").textContent = activeCategory === "all" ? "Semua Produk" : catName;
+  $("productCount").textContent = list.length + " produk";
+
+  $("productGrid").innerHTML = list.map(p => `
+    <article class="card">
+      <div class="thumb">
+        <span class="tag">${p.cat}</span>
+        <img src="${p.img}" alt="${p.name}" loading="lazy"
+             onerror="this.style.display='none';this.parentElement.classList.add('no-img');this.parentElement.dataset.emoji='${p.emoji}'">
+      </div>
+      <div class="card-body">
+        <div class="p-name">${p.name}</div>
+        <div class="p-price">${rupiah(p.price)}</div>
+        <button class="add-btn" onclick="addToCart(${p.id})">+ Tambah ke Keranjang</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+/* ================= CART ================= */
+function addToCart(id){
+  if(!currentUser){ toast("Silakan login dulu ya 🔐"); return; }
+  const p = PRODUCTS.find(x => x.id === id);
+  const found = cart.find(x => x.id === id);
+  if(found) found.qty++;
+  else cart.push({ id:p.id, name:p.name, price:p.price, emoji:p.emoji, img:p.img, qty:1 });
+  saveCart(); renderCart();
+  toast("Ditambahkan: " + p.name + " 🛒");
+}
+
+function changeQty(id, delta){
+  const item = cart.find(x => x.id === id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) cart = cart.filter(x => x.id !== id);
+  saveCart(); renderCart();
+}
+
+function removeItem(id){
+  cart = cart.filter(x => x.id !== id);
+  saveCart(); renderCart();
+  toast("Item dihapus dari keranjang");
+}
+
+function renderCart(){
+  const list = $("cartList");
+  const totalQty = cart.reduce((s,i) => s + i.qty, 0);
+  $("cartBadge").textContent = totalQty;
+
+  if(cart.length === 0){
+    list.innerHTML = `<div class="cart-empty"><span class="big">🛍️</span>Keranjangmu masih kosong.<br>Yuk pilih barang lucu dulu!</div>`;
+  } else {
+    list.innerHTML = cart.map(i => `
+      <div class="cart-item">
+        <div class="ci-thumb">
+          <img src="${i.img}" alt="${i.name}"
+               onerror="this.style.display='none';this.parentElement.classList.add('no-img');this.parentElement.dataset.emoji='${i.emoji}'">
+        </div>
+        <div class="ci-info">
+          <div class="ci-name">${i.name}</div>
+          <div class="ci-price">${rupiah(i.price * i.qty)}</div>
+          <div class="qty">
+            <button onclick="changeQty(${i.id},-1)">−</button>
+            <span>${i.qty}</span>
+            <button onclick="changeQty(${i.id},1)">+</button>
+          </div>
+        </div>
+        <button class="ci-del" onclick="removeItem(${i.id})" title="Hapus">🗑</button>
+      </div>
+    `).join("");
+  }
+
+  const subtotal = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const shipping = (subtotal === 0 || subtotal >= FREE_SHIPPING_MIN) ? 0 : SHIPPING;
+  $("sumSubtotal").textContent = rupiah(subtotal);
+  $("sumShipping").textContent = shipping === 0 ? (subtotal===0 ? rupiah(0) : "GRATIS") : rupiah(shipping);
+  $("sumTotal").textContent    = rupiah(subtotal + shipping);
+  $("cartFoot").style.display  = cart.length ? "block" : "none";
+}
+
+/* ================= DRAWER ================= */
+function openCart(){
+  if(!currentUser){ toast("Login dulu ya 🔐"); return; }
+  $("cartDrawer").classList.add("show");
+  $("overlay").classList.add("show");
+}
+function closeCart(){
+  $("cartDrawer").classList.remove("show");
+  $("overlay").classList.remove("show");
+}
+
+/* ================= CHECKOUT ================= */
+function openCheckout(){
+  if(cart.length === 0){ toast("Keranjang masih kosong 🛍️"); return; }
+  const subtotal = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const shipping = subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING;
+  $("coTotal").textContent = rupiah(subtotal + shipping);
+  $("checkoutModal").classList.add("show");
+}
+function closeCheckout(){ $("checkoutModal").classList.remove("show"); }
+
+function doCheckout(e){
+  e.preventDefault();
+  const subtotal = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const shipping = subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING;
+  const total    = subtotal + shipping;
+  const pay      = document.querySelector('input[name="pay"]:checked').value;
+  const orderId  = "CUT-" + Date.now().toString().slice(-8);
+  const nama     = $("coName").value;
+  const kota     = $("coCity").value;
+
+  const itemsHtml = cart.map(i => `• ${i.name} × ${i.qty} — ${rupiah(i.price * i.qty)}`).join("<br>");
+
+  $("orderDetail").innerHTML = `
+    <b>No. Pesanan:</b> ${orderId}<br>
+    <b>Penerima:</b> ${nama} (${kota})<br>
+    <b>Pembayaran:</b> ${pay}<br><br>
+    <div style="text-align:left;font-size:12.5px;">${itemsHtml}</div>
+    <br>
+    <b>Total: ${rupiah(total)}</b>
+  `;
+
+  cart = [];
+  saveCart(); renderCart();
+  closeCheckout(); closeCart();
+  $("checkoutModal").querySelector("form").reset();
+  $("coName").value = currentUser.name;
+
+  $("successModal").classList.add("show");
+}
+
+function closeSuccess(){
+  $("successModal").classList.remove("show");
+  toast("Terima kasih sudah berbelanja! 🎀");
+}
+
+/* ================= INIT ================= */
+window.addEventListener("DOMContentLoaded", () => {
+  if(localStorage.getItem(LS_SESSION)) startApp();
+  else switchTab("login");
+});
+
+document.querySelectorAll(".modal").forEach(m => {
+  m.addEventListener("click", e => { if(e.target === m) m.classList.remove("show"); });
+});
+
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){
+    closeCart();
+    document.querySelectorAll(".modal").forEach(m => m.classList.remove("show"));
+  }
+});
+</script>
+</body>
+</html>
